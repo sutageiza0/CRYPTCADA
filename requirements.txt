@@ -4,3 +4,4 @@ praw
 openai
 pycord
 gitpython
+aiohttp

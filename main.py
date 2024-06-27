@@ -18,6 +18,7 @@ import git
 import sys
 import asyncio
 import discord
+import aiohttp
 from discord.ext import commands
 import discord.ui
 from discord.ui import Button, View
@@ -105,6 +106,7 @@ async def on_message(message):
     if is_mal == "OK":
         return
     elif is_mal == "ERR":
+        print(f"URL was unsafe.")
         await on_mal_msg(message)
 
     # Delete messages that include bad words from a wordlist
@@ -166,6 +168,7 @@ async def on_message_edit(before, after):
     if is_mal == "OK":
         return
     elif is_mal == "ERR":
+        print(f"URL was unsafe.")
         await on_mal_msg(after)
 
 @bot.command(name='meme', description="Sends a random meme from reddit.")
@@ -324,7 +327,7 @@ async def ping(ctx: Interaction):
     await slash_embed_message(ctx, f'Pong! Latency: {latency}ms', discord.Color.red())
 
 @bot.tree.command(name='github_leak', description="Check a username for a leaked email on GitHub.")
-async def github_leak(ctx: Interaction, username: str):
+async def github_leak(ctx: discord.Interaction, username: str):
     print(f'/github_leak command ran with query: {username}')
 
     pattern = re.compile("^[a-zA-Z0-9+.+_]+$")
@@ -340,54 +343,56 @@ async def github_leak(ctx: Interaction, username: str):
 
     await ctx.response.send_message(f'Scanning for Email. ⏳', ephemeral=True)
 
-    if len(repos) == 0:
-        resp = requests.get(f"https://github.com/{username}?tab=repositories")
-        lines = resp.text.split("\n")
+    async with aiohttp.ClientSession() as session:
+        if len(repos) == 0:
+            async with session.get(f"https://github.com/{username}?tab=repositories") as resp:
+                lines = (await resp.text()).split("\n")
 
-        for line in lines:
-            if ' itemprop="name codeRepository" ' in line:
-                rep_name = line.split('<a href="')[1].split("\"")[0]
-                link = f"https://github.com{rep_name}"
-                repos.append(rep_name)
+            for line in lines:
+                if ' itemprop="name codeRepository" ' in line:
+                    rep_name = line.split('<a href="')[1].split("\"")[0]
+                    link = f"https://github.com{rep_name}"
+                    repos.append(rep_name)
 
-    if len(repos) == 0:
-        await ctx.followup.send("No repositories found :(", ephemeral=True)
-        return
+        if len(repos) == 0:
+            await ctx.followup.send("No repositories found :(", ephemeral=True)
+            return
 
-    read = 0
-    found = {}
-    for repo_name in repos:
-        found[repo_name] = {}
-        try:
-            commits_resp = requests.get(f"https://api.github.com/repos{repo_name}/commits")
-            commits = commits_resp.json()
-            for commit in commits:
-                commit_sha = commit['sha']
-                patch_url = f"https://github.com{repo_name}/commit/{commit_sha}.patch"
-                patch_resp = requests.get(patch_url)
-                patch_content = patch_resp.text
-                lines = patch_content.split("\n")
-                for line in lines:
-                    if line.startswith("From:"):
-                        email = line.split("<")[1].split(">")[0]
-                        if email not in found[repo_name]:
-                            found[repo_name][email] = True
-        except Exception as e:
-            print(f"Error processing repository {repo_name}: {e}")
+        read = 0
+        found = {}
+        for repo_name in repos:
+            found[repo_name] = {}
+            try:
+                async with session.get(f"https://api.github.com/repos{repo_name}/commits") as commits_resp:
+                    commits = await commits_resp.json()
+                for commit in commits:
+                    commit_sha = commit['sha']
+                    patch_url = f"https://github.com{repo_name}/commit/{commit_sha}.patch"
+                    async with session.get(patch_url) as patch_resp:
+                        patch_content = await patch_resp.text()
+                    lines = patch_content.split("\n")
+                    for line in lines:
+                        if line.startswith("From:"):
+                            email = line.split("<")[1].split(">")[0]
+                            if email not in found[repo_name]:
+                                found[repo_name][email] = True
+            except Exception as e:
+                print(f"Error processing repository {repo_name}: {e}")
 
-    full_emails = []
-    for _, (repo_name, repo) in enumerate(found.items()):
-        github_emails = 0
-        for email in repo:
-            if email.endswith("noreply.github.com"):
-                github_emails += 1
-            else:
-                full_emails.append(email)
+        full_emails = []
+        for _, (repo_name, repo) in enumerate(found.items()):
+            github_emails = 0
+            for email in repo:
+                if email.endswith("noreply.github.com"):
+                    github_emails += 1
+                else:
+                    full_emails.append(email)
 
-    if len(full_emails) <= 0:
-        await ctx.edit_original_response(content=f'No emails for {username} Found.')
-    else:
-        await ctx.edit_original_response(content=f'Emails for {username} Found: {full_emails}')
+        if len(full_emails) <= 0:
+            await ctx.edit_original_response(content=f'No emails for {username} found.')
+        else:
+            await ctx.edit_original_response(content=f'Emails for {username} found: {full_emails}')
+
 
 @bot.tree.command(name='search_reddit', description="Search reddit based on a query.")
 async def search_reddit(ctx: Interaction, query: str):
