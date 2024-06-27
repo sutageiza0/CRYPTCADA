@@ -329,7 +329,8 @@ async def ping(ctx: Interaction):
 @bot.tree.command(name='github', description="Check a username for a leaked email on GitHub.")
 async def github(ctx: Interaction, username: str):
 
-    pattern = "^[a-zA-Z0-9+.+_]+$"
+    pattern = re.compile("^[a-zA-Z0-9+.+_]+$")
+
     if not pattern.match(username):
         await slash_ephemeral_message(ctx, f'Invalid Username.', discord.Color.red(), ephemeral=True)
         return
@@ -338,6 +339,8 @@ async def github(ctx: Interaction, username: str):
     users = []
 
     users.append(username)
+
+    await slash_ephemeral_message(ctx, f'Scanning for Email.', discord.Color.red(), ephemeral=True)
 
     if len(repos) == 0:
         resp = requests.get(f"https://github.com/{username}?tab=repositories")
