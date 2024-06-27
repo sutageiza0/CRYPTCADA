@@ -103,7 +103,7 @@ async def on_message(message):
     # if the url/s is safe, we resume safely.
     # otherwise, we warn the sender, log the event, and delete the message
     if is_mal == "OK":
-
+        return
     elif is_mal == "ERR":
         await on_mal_msg(message)
 
@@ -164,7 +164,7 @@ async def on_message_edit(before, after):
     # if the url/s is safe, we resume safely.
     # otherwise, we warn the sender, log the event, and delete the message
     if is_mal == "OK":
-
+        return
     elif is_mal == "ERR":
         await on_mal_msg(after)
 
