@@ -328,11 +328,10 @@ async def ping(ctx: Interaction):
 
 @bot.tree.command(name='github', description="Check a username for a leaked email on GitHub.")
 async def github(ctx: Interaction, username: str):
-
     pattern = re.compile("^[a-zA-Z0-9+.+_]+$")
 
     if not pattern.match(username):
-        await slash_ephemeral_message(ctx, f'Invalid Username.', discord.Color.red(), ephemeral=True)
+        await ctx.response.send_message(f'Invalid Username.', ephemeral=True)
         return
 
     repos = []
@@ -340,7 +339,7 @@ async def github(ctx: Interaction, username: str):
 
     users.append(username)
 
-    await slash_ephemeral_message(ctx, f'Scanning for Email.', discord.Color.red(), ephemeral=True)
+    await ctx.response.send_message(f'Scanning for Email.', ephemeral=True)
 
     if len(repos) == 0:
         resp = requests.get(f"https://github.com/{username}?tab=repositories")
@@ -354,7 +353,7 @@ async def github(ctx: Interaction, username: str):
 
     if len(repos) == 0:
         print("No repositories found :(")
-        await send_embed_message(ctx, "No repositories found :(", discord.Color.red())
+        await ctx.followup.send("No repositories found :(", ephemeral=True)
         return
 
     print("Reading commit logs...")
@@ -392,7 +391,7 @@ async def github(ctx: Interaction, username: str):
                 full_emails.append(email)
         print(f"Github emails: {github_emails}")
 
-    await slash_ephemeral_message(ctx, f'Emails Found: {full_emails}', discord.Color.red(), ephemeral=True)
+    await ctx.edit_original_response(content=f'Emails Found: {full_emails}')
 
 @bot.tree.command(name='search_reddit', description="Search reddit based on a query.")
 async def search_reddit(ctx: Interaction, query: str):
