@@ -103,7 +103,7 @@ async def on_message(message):
     # if the url/s is safe, we resume safely.
     # otherwise, we warn the sender, log the event, and delete the message
     if is_mal == "OK":
-        print(f'returned safe')
+
     elif is_mal == "ERR":
         await on_mal_msg(message)
 
@@ -164,7 +164,7 @@ async def on_message_edit(before, after):
     # if the url/s is safe, we resume safely.
     # otherwise, we warn the sender, log the event, and delete the message
     if is_mal == "OK":
-        print(f'returned safe')
+        
     elif is_mal == "ERR":
         await on_mal_msg(after)
 
@@ -326,7 +326,7 @@ async def ping(ctx: Interaction):
 @bot.tree.command(name='github_leak', description="Check a username for a leaked email on GitHub.")
 async def github_leak(ctx: Interaction, username: str):
     print(f'/github_leak command ran with query: {username}')
-    
+
     pattern = re.compile("^[a-zA-Z0-9+.+_]+$")
 
     if not pattern.match(username):
