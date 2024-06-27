@@ -332,7 +332,7 @@ async def github(ctx: Interaction, username: str):
     pattern = "^[a-zA-Z0-9+.+_]+$"
     if not pattern.match(username):
         await slash_ephemeral_message(ctx, f'Invalid Username.', discord.Color.red(), ephemeral=True)
-        break()
+        return
 
     repos = []
     users = []
