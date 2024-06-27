@@ -98,9 +98,6 @@ async def on_message(message):
     vt_url = None # Initialize vt_url variable
 
     # check if the msg contains an url/s, and if it does, if it/they are malicious
-    print("debugging line below")
-    print(message.content)
-    print(type(message.content))
     is_mal = await sanitize_urls(str(message.content).lower())
 
     # if the url/s is safe, we resume safely.
@@ -162,9 +159,6 @@ async def on_message_edit(before, after):
     vt_url = None # Initialize vt_url variable
 
     # check if the msg contains an url/s, and if it does, if it/they are malicious
-    print("debugging line below")
-    print(after.content)
-    print(type(after.content))
     is_mal = await sanitize_urls(str(after.content).lower())
 
     # if the url/s is safe, we resume safely.
@@ -331,6 +325,8 @@ async def ping(ctx: Interaction):
 
 @bot.tree.command(name='github_leak', description="Check a username for a leaked email on GitHub.")
 async def github_leak(ctx: Interaction, username: str):
+    print(f'/github_leak command ran with query: {username}')
+    
     pattern = re.compile("^[a-zA-Z0-9+.+_]+$")
 
     if not pattern.match(username):
@@ -355,11 +351,9 @@ async def github_leak(ctx: Interaction, username: str):
                 repos.append(rep_name)
 
     if len(repos) == 0:
-        print("No repositories found :(")
         await ctx.followup.send("No repositories found :(", ephemeral=True)
         return
 
-    print("Reading commit logs...")
     read = 0
     found = {}
     for repo_name in repos:
@@ -381,18 +375,14 @@ async def github_leak(ctx: Interaction, username: str):
         except Exception as e:
             print(f"Error processing repository {repo_name}: {e}")
 
-    print("> > > RESULTS < < <")
     full_emails = []
     for _, (repo_name, repo) in enumerate(found.items()):
-        print(f"> EMAILS FOR {repo_name} <")
         github_emails = 0
         for email in repo:
             if email.endswith("noreply.github.com"):
                 github_emails += 1
             else:
-                print("Email:", email)
                 full_emails.append(email)
-        print(f"Github emails: {github_emails}")
 
     if len(full_emails) <= 0:
         await ctx.edit_original_response(content=f'No emails for {username} Found.')
