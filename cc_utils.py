@@ -34,22 +34,15 @@ async def on_mal_msg(message):
     await message.author.send(f'You have been warned in **"{message.guild.name}"** \n \n **Reason:** {warn_reason}')
 
 async def sanitize_urls(message):
-
-    print(f'received message, checking for URLs in sanitize function')
     try:
         # regex for urls
         url_re = r"((?:http.?//|www\.|ftp://|https.?//).*?(?=[<> \n`\"\']))"
         # set for all urls in msg
         urls = set(re.findall(url_re, f'{message} '))
 
-        # print the list of urls for console logging
-        if urls:
-            print(f'Found these urls in the message: {urls}')
-
         # if urls is empty, we can return the original msg, otherwise we continue and
         # check if the urls are malicious
         if not urls:
-            print(f'no urls in message')
             return "OK"
 
         for url in urls:
