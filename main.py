@@ -13,6 +13,9 @@
 #imports
 import re
 import os
+import requests
+import git
+import sys
 import asyncio
 import discord
 from discord.ext import commands
