@@ -389,7 +389,7 @@ async def github(ctx: Interaction, username: str):
                 full_emails.append(email)
         print(f"Github emails: {github_emails}")
 
-     await slash_ephemeral_message(ctx, f'Emails Found: {full_emails}', discord.Color.red(), ephemeral=True)
+    await slash_ephemeral_message(ctx, f'Emails Found: {full_emails}', discord.Color.red(), ephemeral=True)
 
 @bot.tree.command(name='search_reddit', description="Search reddit based on a query.")
 async def search_reddit(ctx: Interaction, query: str):
