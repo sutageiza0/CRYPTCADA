@@ -164,7 +164,7 @@ async def on_message_edit(before, after):
     # if the url/s is safe, we resume safely.
     # otherwise, we warn the sender, log the event, and delete the message
     if is_mal == "OK":
-        
+
     elif is_mal == "ERR":
         await on_mal_msg(after)
 
@@ -548,6 +548,7 @@ async def help(ctx: Interaction):
         '**%translate  < Text to translate >**':  'Translate between text, binary, hexadecimal and chill++.',
         '**/search_reddit  < query >**':  'Search Reddit for posts based on a query.',
         '**/passwordgen  < password length >**':  'Generates a secure password and sends it privately through an ephemeral response.',
+        '**/github_leak**':  'Check a github username for a leaked email on GitHub.',
         '**/setup**':  'Set up the CRYPTCADA log channel. (Admin permissions required)',
         '**/ping**':  'Tells you the bots latency.',
         '**/invite**':  'Invite the bot to your own server.',
