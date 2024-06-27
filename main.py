@@ -62,6 +62,10 @@ async def slash_embed_message(interaction, content: str, color: Color):
     embed = Embed(description=content, color=color)
     await interaction.response.send_message(embed=embed)
 
+async def slash_ephemeral_message(interaction, content: str, color: Color):
+    embed = Embed(description=content, color=color)
+    await interaction.response.send_message(embed=embed, ephemeral=ephemeral)
+
 async def button_embed_message(interaction, content: str, color: Color, view):
     embed = Embed(description=content, color=color)
     view = view
@@ -320,6 +324,71 @@ async def translate(ctx, *, input_text):
 async def ping(ctx: Interaction):
     latency = round(bot.latency * 1000)  # Calculate the bot's latency in milliseconds
     await slash_embed_message(ctx, f'Pong! Latency: {latency}ms', discord.Color.red())
+
+@bot.tree.command(name='github', description="Check a username for a leaked email on GitHub.")
+async def github(ctx: Interaction, username: str):
+
+    pattern = "^[a-zA-Z0-9+.+_]+$"
+    if not pattern.match(username):
+        await slash_ephemeral_message(ctx, f'Invalid Username.', discord.Color.red(), ephemeral=True)
+        break()
+
+    repos = []
+    users = []
+
+    users.append(username)
+
+    if len(repos) == 0:
+        resp = requests.get(f"https://github.com/{username}?tab=repositories")
+        lines = resp.text.split("\n")
+
+        for line in lines:
+            if ' itemprop="name codeRepository" ' in line:
+                rep_name = line.split('<a href="')[1].split("\"")[0]
+                link = f"https://github.com{rep_name}"
+                repos.append(rep_name)
+
+    if len(repos) == 0:
+        print("No repositories found :(")
+        await send_embed_message(ctx, "No repositories found :(", discord.Color.red())
+        return
+
+    print("Reading commit logs...")
+    read = 0
+    found = {}
+    for repo_name in repos:
+        found[repo_name] = {}
+        try:
+            commits_resp = requests.get(f"https://api.github.com/repos{repo_name}/commits")
+            commits = commits_resp.json()
+            for commit in commits:
+                commit_sha = commit['sha']
+                patch_url = f"https://github.com{repo_name}/commit/{commit_sha}.patch"
+                patch_resp = requests.get(patch_url)
+                patch_content = patch_resp.text
+                lines = patch_content.split("\n")
+                for line in lines:
+                    if line.startswith("From:"):
+                        email = line.split("<")[1].split(">")[0]
+                        if email not in found[repo_name]:
+                            found[repo_name][email] = True
+        except Exception as e:
+            print(f"Error processing repository {repo_name}: {e}")
+
+    print("> > > RESULTS < < <")
+    full_emails = []
+    for _, (repo_name, repo) in enumerate(found.items()):
+        print(f"> EMAILS FOR {repo_name} <")
+        github_emails = 0
+        for email in repo:
+            if email.endswith("noreply.github.com"):
+                github_emails += 1
+            else:
+                print("Email:", email)
+                full_emails.append(email)
+        print(f"Github emails: {github_emails}")
+
+     await slash_ephemeral_message(ctx, f'Emails Found: {full_emails}', discord.Color.red(), ephemeral=True)
 
 @bot.tree.command(name='search_reddit', description="Search reddit based on a query.")
 async def search_reddit(ctx: Interaction, query: str):
