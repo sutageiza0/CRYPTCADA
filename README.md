@@ -38,13 +38,9 @@ Then once the bot is in your server you can simply use the `/setup` command to s
 
 ## Commands
 
-- `%question <question>`: Ask ChatGPT a question.
-- `%fix_code <code>`: Let ChatGPT fix your code.
-- `%joke`: Make ChatGPT tell you a joke.
 - `%meme`: Get a meme from a random sub reddit.
-- `%search_reddit <query>`: Search Reddit for posts based on a query.
 - `%translate <text>`: Translate between text, binary, hexadecimal, and chill++.
-- `%lincom <command_name>`: Get a Linux command explanation from ChatGPT.
+- `/search_reddit <query>`: Search Reddit for posts based on a query.
 - `/setup`: Set up the CRYPTCADA log channel. (Admin permissions required)
 - `/ping`: Check the bot's latency.
 - `/invite`: Invite the bot to a different server.
