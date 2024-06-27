@@ -329,8 +329,8 @@ async def ping(ctx: Interaction):
     latency = round(bot.latency * 1000)  # Calculate the bot's latency in milliseconds
     await slash_embed_message(ctx, f'Pong! Latency: {latency}ms', discord.Color.red())
 
-@bot.tree.command(name='github', description="Check a username for a leaked email on GitHub.")
-async def github(ctx: Interaction, username: str):
+@bot.tree.command(name='github_leak', description="Check a username for a leaked email on GitHub.")
+async def github_leak(ctx: Interaction, username: str):
     pattern = re.compile("^[a-zA-Z0-9+.+_]+$")
 
     if not pattern.match(username):
@@ -342,7 +342,7 @@ async def github(ctx: Interaction, username: str):
 
     users.append(username)
 
-    await ctx.response.send_message(f'Scanning for Email.', ephemeral=True)
+    await ctx.response.send_message(f'Scanning for Email. ⏳', ephemeral=True)
 
     if len(repos) == 0:
         resp = requests.get(f"https://github.com/{username}?tab=repositories")
@@ -394,7 +394,10 @@ async def github(ctx: Interaction, username: str):
                 full_emails.append(email)
         print(f"Github emails: {github_emails}")
 
-    await ctx.edit_original_response(content=f'Emails Found: {full_emails}')
+    if len(full_emails) <= 0:
+        await ctx.edit_original_response(content=f'No emails for {username} Found.')
+    else:
+        await ctx.edit_original_response(content=f'Emails for {username} Found: {full_emails}')
 
 @bot.tree.command(name='search_reddit', description="Search reddit based on a query.")
 async def search_reddit(ctx: Interaction, query: str):
