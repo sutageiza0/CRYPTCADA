@@ -542,7 +542,7 @@ async def setup(ctx: Interaction):
             except Exception as e:
                 print(f"An error occurred: {e}")
 
-@bot.tree.command(name="address_ping", description="ping an address for a specified amout of times between 1 and 50", usage="ping <address> [pings]")
+@bot.tree.command(name="address_ping", description="ping an address for a specified amout of times between 1 and 50")
 async def adress_ping(ctx: Interaction, address: str, pings: int = 1):
     timeout = 5
     address = escape_mentions(address)
