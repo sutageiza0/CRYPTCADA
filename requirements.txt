@@ -5,4 +5,3 @@ openai
 pycord
 gitpython
 aiohttp
-ping3

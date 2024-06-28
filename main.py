@@ -19,7 +19,7 @@ import sys
 import asyncio
 import discord
 import aiohttp
-import ping3
+import subprocess
 from discord.ext import commands
 import discord.ui
 from discord.ui import Button, View
@@ -560,10 +560,25 @@ async def address_ping(ctx: Interaction, address: str, pings: int = 3):
     content = f"\n"
     for _ in range(pings):
         try:
-            ping_request = ping3.ping(address, timeout=timeout)
-            if ping_request is None:
-                raise Exception("Request timed out")
-            content += f"Received response from {address} in: {ping_request:.2f}s.\n"
+            # Run the ping command using subprocess
+            result = subprocess.run(
+                ["ping", "-c", "1", "-W", str(timeout), address],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+
+            if result.returncode == 0:
+                # Extract the ping time from the result
+                output = result.stdout
+                time_index = output.find("time=")
+                if time_index != -1:
+                    ping_time = output[time_index:].split()[0].split('=')[1]
+                    content += f"Received response from {address} in: {ping_time}ms.\n"
+                else:
+                    content += f"Received response from {address}, but couldn't parse ping time.\n"
+            else:
+                content += f"Could not ping {address} - {result.stderr.strip()}\n"
         except Exception as err:
             content += f"Could not ping {address} - {str(err)}\n"
 
