@@ -43,7 +43,7 @@ Then once the bot is in your server you can simply use the `/setup` command to s
 - `%translate <text>`: Translate between text, binary, hexadecimal, and chill++.
 - `/github_leak <username>`: Check a username for a leaked email on GitHub.
 - `/search_reddit <query>`: Search Reddit for posts based on a query.
-- `/passwordgen  <password length>`: Generates a secure password and sends it privately through an ephemeral response.
+- `/passwordgen <length>`: Generates a secure password and sends it privately through an ephemeral response.
 - `/setup`: Set up the CRYPTCADA log channel. (Admin permissions required)
 - `/ping`: Check the bot's latency.
 - `/invite`: Invite the bot to a different server.
