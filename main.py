@@ -561,10 +561,10 @@ async def adress_ping(ctx: Interaction, address: str, pings: int = 1):
         try:
             ping_request = await aioping.ping(address, timeout=timeout)
         except Exception as err:
-            embedE = discord.Embed(description=f"Could not ping {address} - {str(err)} \n", color=discord.Color.red())
+            embedE = f"Could not ping {address} - {str(err)} \n"
             await ctx.edit_original_response(content=content + embedE)
         else:
-            embedR = discord.Embed(description=f"Received response from {address} in: {ping_request}s. \n", color=discord.Color.red())
+            embedR = f"Received response from {address} in: {ping_request}s. \n"
             await ctx.edit_original_response(content=content + embedR)
         await asyncio.sleep(1)
 
