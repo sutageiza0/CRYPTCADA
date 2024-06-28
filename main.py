@@ -388,7 +388,7 @@ async def github_leak(ctx: discord.Interaction, username: str):
         if len(full_emails) <= 0:
             await ctx.edit_original_response(content=f'No emails for {username} found.')
         else:
-            await ctx.edit_original_response(content=f'Emails for {username} found:\n{'\n'.join(full_emails)}')
+            await ctx.edit_original_response(content=f'Emails for {username} found:\n'+'\n'.join(full_emails))
 
 
 @bot.tree.command(name='search_reddit', description="Search reddit based on a query.")
