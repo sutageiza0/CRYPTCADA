@@ -29,6 +29,8 @@ Welcome to the CRYPTCADA Discord Bot, created by GAZE aka UzerZero! CRYPTCADA is
 - **Sever Moderation:** CRYPTCADA also scans all posted messages for highly offensive words and has a 'logs' channel where all offensive or malicious messages and URLs are logged for easy moderation.
 - **Reddit Integration:** Fetch random memes or search Reddit for posts based on a query.
 - **Text Translation:** Translate between different ciphers and encodings, including binary, hexadecimal, and it's own new cipher "Chill++".
+- **GitHub Leaks:** Checking a specific GitHub leak for emails from a username.
+- **Password Generation:** Generate a secure password with a random mixture of characters and symbols and send it securely through an ephemeral reply.
 
 ## Setup
 
@@ -39,7 +41,9 @@ Then once the bot is in your server you can simply use the `/setup` command to s
 
 - `%meme`: Get a meme from a random sub reddit.
 - `%translate <text>`: Translate between text, binary, hexadecimal, and chill++.
+- `/github_leak <username>`: Check a username for a leaked email on GitHub.
 - `/search_reddit <query>`: Search Reddit for posts based on a query.
+- `/passwordgen  <password length>`: Generates a secure password and sends it privately through an ephemeral response.
 - `/setup`: Set up the CRYPTCADA log channel. (Admin permissions required)
 - `/ping`: Check the bot's latency.
 - `/invite`: Invite the bot to a different server.
