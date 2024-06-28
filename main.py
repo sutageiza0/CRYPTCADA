@@ -554,6 +554,13 @@ async def address_ping(ctx: Interaction, address: str, pings: int = 3):
         await ctx.response.send_message(embed=embed, ephemeral=True)
         return
 
+    # Find the ping command
+    ping_cmd = shutil.which("ping")
+    if ping_cmd is None:
+        embed = discord.Embed(description="Ping command not found on this system.", color=discord.Color.red())
+        await ctx.response.send_message(embed=embed, ephemeral=True)
+        return
+
     embed = discord.Embed(title=f"Pinging {address}:\n", color=discord.Color.red())
     await ctx.response.send_message(embed=embed)
 
@@ -562,7 +569,7 @@ async def address_ping(ctx: Interaction, address: str, pings: int = 3):
         try:
             # Run the ping command using subprocess
             result = subprocess.run(
-                ["ping", "-c", "1", "-W", str(timeout), address],
+                [ping_cmd, "-c", "1", "-W", str(timeout), address],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True
