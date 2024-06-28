@@ -19,7 +19,7 @@ import sys
 import asyncio
 import discord
 import aiohttp
-import aioping
+import ping3
 from discord.ext import commands
 import discord.ui
 from discord.ui import Button, View
@@ -557,10 +557,11 @@ async def address_ping(ctx: Interaction, address: str, pings: int = 3):
     embed = discord.Embed(title=f"Pinging {address}:\n", color=discord.Color.red())
     await ctx.response.send_message(embed=embed)
 
-    content = f"Pinging {address}:\n"
     for _ in range(pings):
         try:
-            ping_request = await aioping.ping(address, timeout=timeout)
+            ping_request = ping3.ping(address, timeout=timeout)
+            if ping_request is None:
+                raise Exception("Request timed out")
             content += f"Received response from {address} in: {ping_request:.2f}s.\n"
         except Exception as err:
             content += f"Could not ping {address} - {str(err)}\n"
