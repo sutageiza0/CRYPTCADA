@@ -20,6 +20,7 @@ import asyncio
 import discord
 import aiohttp
 import subprocess
+import shutil
 from discord.ext import commands
 import discord.ui
 from discord.ui import Button, View
