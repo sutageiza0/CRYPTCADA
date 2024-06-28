@@ -544,28 +544,29 @@ async def setup(ctx: Interaction):
             except Exception as e:
                 print(f"An error occurred: {e}")
 
-@bot.tree.command(name="address_ping", description="ping an IP address for a specified amout of times between 1 and 50")
-async def adress_ping(ctx: Interaction, address: str, pings: int = 1):
+@bot.tree.command(name="address_ping", description="ping an IP address for a specified amount of times between 1 and 50")
+async def address_ping(ctx: Interaction, address: str, pings: int = 3):
     timeout = 5
-    address = escape_mentions(address)
+    address = discord.utils.escape_mentions(address)
 
     if pings <= 0 or pings >= 51:
         embed = discord.Embed(description="Ping amount has to be between 1 and 50.", color=discord.Color.red())
         await ctx.response.send_message(embed=embed, ephemeral=True)
         return
 
-    embedI = discord.Embed(description=f"Pinging {address}: \n", color=discord.Color.red())
-    content = await ctx.response.send_message(embed=embedI)
+    embed = discord.Embed(title=f"Pinging {address}:\n", color=discord.Color.red())
+    message = await ctx.response.send_message(embed=embed)
 
+    content = f"Pinging {address}:\n"
     for _ in range(pings):
         try:
             ping_request = await aioping.ping(address, timeout=timeout)
+            content += f"Received response from {address} in: {ping_request:.2f}s.\n"
         except Exception as err:
-            embedE = f"Could not ping {address} - {str(err)} \n"
-            await ctx.edit_original_response(content=content.append(embedE))
-        else:
-            embedR = f"Received response from {address} in: {ping_request}s. \n"
-            await ctx.edit_original_response(content=content.append(embedR))
+            content += f"Could not ping {address} - {str(err)}\n"
+
+        embed.description = content
+        await message.edit(embed=embed)
         await asyncio.sleep(1)
 
 @bot.tree.command(name='help', description="Tells you all the available commands.")
