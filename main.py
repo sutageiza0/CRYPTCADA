@@ -557,6 +557,7 @@ async def address_ping(ctx: Interaction, address: str, pings: int = 3):
     embed = discord.Embed(title=f"Pinging {address}:\n", color=discord.Color.red())
     await ctx.response.send_message(embed=embed)
 
+    content = f"\n"
     for _ in range(pings):
         try:
             ping_request = ping3.ping(address, timeout=timeout)
