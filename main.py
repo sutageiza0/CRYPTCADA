@@ -20,7 +20,6 @@ import asyncio
 import discord
 import aiohttp
 import subprocess
-import shutil
 from discord.ext import commands
 import discord.ui
 from discord.ui import Button, View
@@ -544,55 +543,6 @@ async def setup(ctx: Interaction):
                 await slash_embed_message(ctx, f'Cryptcada channels and category have been set up successfully.', discord.Color.red())
             except Exception as e:
                 print(f"An error occurred: {e}")
-
-@bot.tree.command(name="address_ping", description="ping an IP address for a specified amount of times between 1 and 50")
-async def address_ping(ctx: Interaction, address: str, pings: int = 3):
-    timeout = 5
-    address = discord.utils.escape_mentions(address)
-
-    if pings <= 0 or pings >= 51:
-        embed = discord.Embed(description="Ping amount has to be between 1 and 50.", color=discord.Color.red())
-        await ctx.response.send_message(embed=embed, ephemeral=True)
-        return
-
-    # Find the ping command
-    ping_cmd = shutil.which("ping")
-    if ping_cmd is None:
-        embed = discord.Embed(description="Ping command not found on this system.", color=discord.Color.red())
-        await ctx.response.send_message(embed=embed, ephemeral=True)
-        return
-
-    embed = discord.Embed(title=f"Pinging {address}:\n", color=discord.Color.red())
-    await ctx.response.send_message(embed=embed)
-
-    content = f"\n"
-    for _ in range(pings):
-        try:
-            # Run the ping command using subprocess
-            result = subprocess.run(
-                [ping_cmd, "-c", "1", "-W", str(timeout), address],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True
-            )
-
-            if result.returncode == 0:
-                # Extract the ping time from the result
-                output = result.stdout
-                time_index = output.find("time=")
-                if time_index != -1:
-                    ping_time = output[time_index:].split()[0].split('=')[1]
-                    content += f"Received response from {address} in: {ping_time}ms.\n"
-                else:
-                    content += f"Received response from {address}, but couldn't parse ping time.\n"
-            else:
-                content += f"Could not ping {address} - {result.stderr.strip()}\n"
-        except Exception as err:
-            content += f"Could not ping {address} - {str(err)}\n"
-
-        embed.description = content
-        await ctx.edit_original_response(embed=embed)
-        await asyncio.sleep(1)
 
 @bot.tree.command(name='help', description="Tells you all the available commands.")
 async def help(ctx: Interaction):
