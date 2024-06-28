@@ -330,7 +330,7 @@ async def ping(ctx: Interaction):
 async def github_leak(ctx: discord.Interaction, username: str):
     print(f'/github_leak command ran with query: {username}')
 
-    pattern = re.compile("^[a-zA-Z0-9+.+_]+$")
+    pattern = re.compile("^[a-zA-Z0-9+-]+$")
 
     if not pattern.match(username):
         await ctx.response.send_message(f'Invalid Username.', ephemeral=True)
@@ -381,17 +381,14 @@ async def github_leak(ctx: discord.Interaction, username: str):
 
         full_emails = []
         for _, (repo_name, repo) in enumerate(found.items()):
-            github_emails = 0
             for email in repo:
-                if email.endswith("noreply.github.com"):
-                    github_emails += 1
-                else:
+                if not email.endswith("noreply.github.com"):
                     full_emails.append(email)
 
         if len(full_emails) <= 0:
             await ctx.edit_original_response(content=f'No emails for {username} found.')
         else:
-            await ctx.edit_original_response(content=f'Emails for {username} found: {full_emails}')
+            await ctx.edit_original_response(content=f'Emails for {username} found:\n{'\n'.join(full_emails)}')
 
 
 @bot.tree.command(name='search_reddit', description="Search reddit based on a query.")
