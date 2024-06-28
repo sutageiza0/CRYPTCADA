@@ -542,6 +542,30 @@ async def setup(ctx: Interaction):
             except Exception as e:
                 print(f"An error occurred: {e}")
 
+@bot.tree.command(name="address_ping", description="ping an address for a specified amout of times between 1 and 50", usage="ping <address> [pings]")
+async def adress_ping(ctx: Interaction, address: str, pings: int = 1):
+    timeout = 5
+    address = escape_mentions(address)
+
+    if pings <= 0 or pings >= 51:
+        embed = discord.Embed(description="Ping amount has to be between 1 and 50.", color=discord.Color.red())
+        await ctx.response.send_message(embed=embed, ephemeral=True)
+        return
+
+    embedI = discord.Embed(description=f"Pinging{address}:", color=discord.Color.red())
+    content = await ctx.response.send_message(embed=embedI)
+
+    for _ in range(pings):
+        try:
+            ping_request = await aioping.ping(address, timeout=timeout)
+        except Exception as err:
+            embedE = discord.Embed(description=f"Could not ping {address} - {str(err)} \n", color=discord.Color.red())
+            await ctx.edit_original_response(content=content + embedE)
+        else:
+            embedR = discord.Embed(description=f"Received response from {address} in: {ping_request}s. \n", color=discord.Color.red())
+            await ctx.edit_original_response(content=content + embedR)
+        await asyncio.sleep(1)
+
 @bot.tree.command(name='help', description="Tells you all the available commands.")
 async def help(ctx: Interaction):
     # Define a dictionary of commands and their explanations with formatting
