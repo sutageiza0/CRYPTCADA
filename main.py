@@ -19,9 +19,11 @@ import sys
 import asyncio
 import discord
 import aiohttp
+import aioping
 from discord.ext import commands
 import discord.ui
 from discord.ui import Button, View
+from discord.utils import escape_mentions
 from discord import app_commands, Interaction, Embed, Color
 import pycord
 from urllib.parse import urlparse, unquote
