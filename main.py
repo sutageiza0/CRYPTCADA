@@ -555,7 +555,7 @@ async def address_ping(ctx: Interaction, address: str, pings: int = 3):
         return
 
     embed = discord.Embed(title=f"Pinging {address}:\n", color=discord.Color.red())
-    message = await ctx.response.send_message(embed=embed)
+    await ctx.response.send_message(embed=embed)
 
     content = f"Pinging {address}:\n"
     for _ in range(pings):
@@ -566,7 +566,7 @@ async def address_ping(ctx: Interaction, address: str, pings: int = 3):
             content += f"Could not ping {address} - {str(err)}\n"
 
         embed.description = content
-        await message.edit(embed=embed)
+        await ctx.edit_original_response(embed=embed)
         await asyncio.sleep(1)
 
 @bot.tree.command(name='help', description="Tells you all the available commands.")
